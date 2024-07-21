@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "@clerk/nextjs": "^5.2.4",
+    "@uploadthing/react": "^6.7.2",
+    "mongoose": "^8.5.1",
+    "svix": "^1.25.0",
+    "uploadthing": "^6.13.2"
+  }
+}
