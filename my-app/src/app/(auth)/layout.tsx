@@ -1,30 +1,32 @@
-import React from 'react';
-import { ClerkProvider } from '@clerk/nextjs';
-import { Poppins } from 'next/font/google';
-import '../globals.css';
+import React from "react";
+import type { Metadata } from "next";
+import { Inter } from "next/font/google";
+import { ClerkProvider } from "@clerk/nextjs";
+import { dark } from "@clerk/themes";
+
+import "../globals.css";
+
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
     title: 'Real Estate Manager',
     description: 'A Next.js 13 Meta Real Estate Manager'
 };
 
-const poppins = Poppins({
-    subsets: ['latin'],
-    weight: '100'
-});
-
 export default function RootLayout({
-    children
-}: {
-    children: React.ReactNode
-}) {
+    children,
+  }: {
+    children: React.ReactNode;
+  }) {
     return (
-        <ClerkProvider>
-            <html lang="en">
-                <body className={'${poppins.className} #1A1A1A'}>
-                    {children}
-                </body>
-            </html>
-        </ClerkProvider>
+      <ClerkProvider
+        appearance={{
+          baseTheme: dark,
+        }}
+      >
+        <html lang='en'>
+          <body className={`${inter.className} bg-dark-1`}>{children}</body>
+        </html>
+      </ClerkProvider>
     );
-}
+  }

@@ -1,11 +1,5 @@
-import React from 'react'
-
-function page() {
-  return (
-    <div>
-      maintenance
-    </div>
-  )
+async function Page() {
+  return <h1 className="head-text">Test</h1>
 }
 
-export default page
+export default Page;

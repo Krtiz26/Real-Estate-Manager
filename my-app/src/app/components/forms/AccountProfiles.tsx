@@ -5,11 +5,10 @@ import { Button } from "@/app/components/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
-  FormField,
   FormItem,
   FormLabel,
   FormMessage,
+  FormField,
 } from "@/app/components/ui/form";
 import { Input } from "@/app/components/ui/input";
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -20,14 +19,17 @@ import { z } from "zod";
 import { isBase64Image } from '@/app/lib/utils';
 import { useUploadThing } from '@/app/lib/uploadthing';
 import { usePathname, useRouter } from "next/navigation";
+import { FaLandmark } from 'react-icons/fa';
+import { updateUser } from '@/app/lib/actions/user.actions';
 
 interface Props {
   user: {
     id: string;
-    objectid: string;
+    objectId: string;
     username: string;
     name: string;
     image: string;
+    account_type: string;
   };
   btnTitle: string;
 }
@@ -44,6 +46,7 @@ const AccountProfile = ({ user, btnTitle }: Props) => {
       profile_photo: user?.image || "",
       name: user?.name || "",
       username: user?.username || "",
+      account_type: user?.account_type || "",
     }
   });
 
@@ -79,9 +82,21 @@ const AccountProfile = ({ user, btnTitle }: Props) => {
       }
     }
 
-    // TODO: Update user profile
-    
-  };
+    await updateUser({
+      userId: user.id,
+      username: values.username,
+      name: values.name,
+      image: values.profile_photo,
+      account_type: values.account_type,
+      path: pathname
+    })
+
+    if(pathname === '/profile/edit') {
+      router.back();
+    } else {
+      router.push('/');
+    }
+  }
 
   return (
     <Form {...form}>
@@ -94,7 +109,7 @@ const AccountProfile = ({ user, btnTitle }: Props) => {
           name='profile_photo'
           render={({ field }) => (
             <FormItem>
-              <FormLabel className='text-base-semibold text-light-2'>
+              <FormLabel className='text-base-semibold text-black'>
                 Profile Photo
               </FormLabel>
               <div className='flex items-center gap-4'>
@@ -138,7 +153,7 @@ const AccountProfile = ({ user, btnTitle }: Props) => {
           name='name'
           render={({ field }) => (
             <FormItem className='flex flex-col gap-2'>
-              <FormLabel className='text-base-semibold text-light-2'>
+              <FormLabel className='text-base-semibold text-black'>
                 Name
               </FormLabel>
               <div className='flex items-center gap-3'>
@@ -149,9 +164,6 @@ const AccountProfile = ({ user, btnTitle }: Props) => {
                     {...field}
                   />
                 </FormControl>
-                <FormDescription className='text-sm text-gray-500'>
-                  This is your public display name.
-                </FormDescription>
               </div>
               <FormMessage />
             </FormItem>
@@ -163,7 +175,7 @@ const AccountProfile = ({ user, btnTitle }: Props) => {
           name='username'
           render={({ field }) => (
             <FormItem className='flex w-full flex-col gap-3'>
-              <FormLabel className='text-base-semibold text-light-2'>
+              <FormLabel className='text-base-semibold text-black'>
                 Username
               </FormLabel>
               <FormControl>
@@ -177,6 +189,52 @@ const AccountProfile = ({ user, btnTitle }: Props) => {
             </FormItem>
           )}
         />
+
+        <FormField
+          control={form.control}
+          name='account_type'
+          render={({ field }) => (
+            <FormItem className='flex flex-col gap-2'>
+              <FormLabel className='text-base-semibold text-black'>
+                Account Type
+              </FormLabel>
+              <div className='flex flex-col gap-4 sm:flex-row'>
+                <Button
+                  type='button'
+                  className={`rounded-lg flex items-center border-2 border-slate-300 w-full sm:w-80 h-auto p-4 gap-2 ${
+                    field.value === 'landlord' ? 'bg-green-500 text-white' : 'bg-white text-black'
+                  }`}
+                  onClick={() => field.onChange('landlord')}
+                >
+                  <div className='flex flex-col items-center gap-2 text-center'>
+                    <FaLandmark className='text-2xl' />
+                    <div className='font-semibold'>Landlord</div>
+                    <div className='text-small-regular text-wrap w-64'>
+                      Accept rent online & manage rental
+                    </div>
+                  </div>
+                </Button>
+                <Button
+                  type='button'
+                  className={`rounded-lg flex items-center border-2 border-slate-300 w-full sm:w-80 h-auto p-4 gap-2 ${
+                    field.value === 'tenant' ? 'bg-green-500 text-white' : 'bg-white text-black'
+                  }`}
+                  onClick={() => field.onChange('tenant')}
+                >
+                  <div className='flex flex-col items-center gap-2 text-center'>
+                    <FaLandmark className='text-2xl' />
+                    <div className='font-semibold'>Tenant</div>
+                    <div className='text-small-regular text-wrap w-64'>
+                      Pay rent online and stay more connected with your landlord
+                    </div>
+                  </div>
+                </Button>
+              </div>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        
         <Button type='submit' className='bg-green-500'>
           {btnTitle}
         </Button>

@@ -1,11 +1,12 @@
+import React from "react";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import { ClerkProvider } from '@clerk/nextjs';
+import { ClerkProvider } from "@clerk/nextjs";
+import { dark, shadesOfPurple  } from "@clerk/themes";
 
 
 import "../globals.css";
 import TopBar from "../components/shared/TopBar";
-import MainBox from "../components/shared/Main Box";
 import LeftBar from "../components/shared/LeftBar";
 import Bottombar from "../components/shared/BottomBar";
 
@@ -20,22 +21,30 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
-  <ClerkProvider>
-    <html lang="en">
-      <body className={inter.className}>
-        <LeftBar />
-          <main>
-            <TopBar />
-            <MainBox />
-            <Bottombar />
-            {children}
+    <ClerkProvider
+      appearance={{
+        baseTheme: [dark, shadesOfPurple ]
+      }}
+    >
+      <html lang='en'>
+        <body className={inter.className}>
+          <TopBar />
+
+          <main className='flex flex-row'>
+            <LeftBar />
+            <section className='main-container'>
+              <div className='w-full max-w-4xl'>{children}</div>
+            </section>
+            {/* @ts-ignore */}
           </main>
-      </body>
-    </html>
-  </ClerkProvider>
+
+          <Bottombar />
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }
